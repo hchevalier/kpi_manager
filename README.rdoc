@@ -1,0 +1,12 @@
+= KpiManager
+
+As a developer:
+Define KPIs in an initializer
+
+As a back-office administrator:
+- Create a report from back-office
+- Attach any KPI that has been created by your developers
+- KPIs removed by developers will be ignored without crashing the whole report
+- Select your start and end dates to generate the report
+
+rails g kpi_manager:migrations
