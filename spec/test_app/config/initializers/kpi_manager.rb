@@ -19,3 +19,12 @@ end
 KpiManager::Kpi.add(:average_order, 'Average order', dataset: :bills, references: [:total_earned]) do |dataset, **refs|
   dataset.count.zero? ? 0 : refs[:total_earned] / dataset.count
 end
+
+KpiManager::Kpi.add(:promotion_used, 'Promotion used', dataset: :bills) do |dataset, **refs|
+  dataset.where.not(promotion: nil).count
+end
+
+KpiManager::Kpi.add(:average_promotion, 'Average promotion', dataset: :bills) do |dataset, **refs|
+  sum = dataset.where.not(promotion: nil).inject(0) { |acc, elem| acc + elem.promotion.percentage }
+  dataset.count.zero? ? 0 : sum / dataset.count
+end

@@ -2,6 +2,7 @@ RSpec.configure do |config|
   require 'simplecov'
   SimpleCov.start do
     add_filter '/spec/'
+    add_filter '/lib/kpi_manager/generators/'
   end
 
   config.expect_with :rspec do |expectations|
@@ -11,6 +12,10 @@ RSpec.configure do |config|
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
   end
+
+  require 'factory_girl_rails'
+  require 'faker'
+  config.include FactoryGirl::Syntax::Methods
 
   config.shared_context_metadata_behavior = :apply_to_host_groups
 

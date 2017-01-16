@@ -9,10 +9,15 @@ Gem::Specification.new do |s|
   s.version     = KpiManager::VERSION
   s.authors     = ['Hugo Chevalier']
   s.email       = ['drakhaine@gmail.com']
-  s.homepage    = 'https://rubygems.org/kpi_manager'
-  s.date        = '2016-01-16'
-  s.summary     = 'Summary of KpiManager.'
-  s.description = 'Description of KpiManager.'
+  s.homepage    = 'https://github.com/hchevalier/kpi_manager'
+  s.date        = '2016-01-17'
+  s.summary     = 'Create recurrent reports from KPIs.'
+  s.description = <<-EOF
+    KpiManager allows to create reports from a back-office.
+    KPIs must be defined in the code before they're available in reports editor.
+    On v1.0.0, it will be possible to schedule recurrent reporting by email
+    and to create report-tied dashboards displaying widgets for each of your KPIs.
+  EOF
   s.license     = 'MIT'
 
   s.files       = Dir[
@@ -31,6 +36,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec', '~> 3.5'
   s.add_development_dependency 'rspec-rails', '~> 3.5'
   s.add_development_dependency 'rspec-mocks', '~> 3.5'
+  s.add_development_dependency 'factory_girl_rails', '~> 4.8.0'
+  s.add_development_dependency 'faker', '~> 1.7.0'
   # Test coverage
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'codeclimate-test-reporter', '~> 1.0.0'
