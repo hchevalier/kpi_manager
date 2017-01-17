@@ -1,0 +1,9 @@
+language: ruby
+rvm:
+  - 2.2.0
+  - 2.2.5
+addons:
+  code_climate:
+    repo_token: 0560258fd56f3729ae23e5a1b58a0569d2eadab5b770d3bcdfdc65462c0c35dd
+after_success:
+  - bundle exec codeclimate-test-reporter

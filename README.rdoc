@@ -1,5 +1,8 @@
 = KpiManager
 
+{<img src="https://badge.fury.io/rb/kpi_manager.svg" alt="Gem Version" />}[https://badge.fury.io/rb/kpi_manager] {<img src="https://codeclimate.com/github/hchevalier/kpi_manager/badges/gpa.svg" />}[https://codeclimate.com/github/hchevalier/kpi_manager] {<img src="https://codeclimate.com/github/hchevalier/kpi_manager/badges/coverage.svg" />}[https://codeclimate.com/github/hchevalier/kpi_manager/coverage] {<img src="https://travis-ci.org/hchevalier/kpi_manager.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/hchevalier/kpi_manager]
+
+
 As a developer:
 Define KPIs in an initializer
 
