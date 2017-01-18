@@ -1,0 +1,23 @@
+Name: <%= @report.name %><br>
+Frequency: <%= @report.send_frequency %><br>
+Report as: <%= @report.send_step %><br>
+Recipients: <%= @report.recipients %><br>
+
+<table id="kpis">
+  <tr>
+    <th>KPI</th>
+    <th>Type</th>
+    <th>Unit</th>
+  </tr>
+  <% @report.kpis.each do |kpi| %>
+    <tr class="fields">
+      <td><%= kpi.slug %></td>
+      <td><%= kpi.kpi_type.remove('type_') %></td>
+      <td><%= kpi.unit %></td>
+    </tr>
+  <% end %>
+</table>
+
+<%= link_to 'Generate for current month', generate_report_path(@report, from: Date.today.beginning_of_month, to: Date.today.end_of_month) %>
+
+<%= link_to 'Back', reports_path %>

@@ -10,3 +10,6 @@ require 'kpi_manager/models/report'
 
 require 'rails/generators'
 require 'kpi_manager/generators/kpi_manager_generator'
+
+require 'jquery-rails'
+require 'nested_form'

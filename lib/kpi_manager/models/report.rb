@@ -2,8 +2,15 @@ module KpiManager
   # Allow to manipulate recurrent reports
   class Report < ActiveRecord::Base
     has_many :kpis, class_name: 'KpiManager::Kpi'
+    accepts_nested_attributes_for :kpis, allow_destroy: true
 
     after_initialize :initialize_instance_vars
+
+    enum send_frequency: %w(daily weekly monthly)
+    FREQUENCIES = KpiManager::Report.send_frequencies.keys.to_a.freeze
+
+    enum send_step: %w(days weeks months)
+    STEPS = KpiManager::Report.send_steps.keys.to_a.freeze
 
     def generate(from, to = nil)
       @from = from
@@ -80,7 +87,7 @@ module KpiManager
     end
 
     def registered_kpis
-      all_kpis = KpiManager::Kpi.class_variable_get(:@@kpis)
+      all_kpis = KpiManager::Kpi.list
       authorized = kpis.pluck(:slug).map(&:to_sym)
       all_kpis.select { |kpi_name, _kpi_data| authorized.include?(kpi_name) }
     end

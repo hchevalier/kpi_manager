@@ -29,6 +29,8 @@ Gem::Specification.new do |s|
   s.test_files  = Dir['spec/**/*.rb']
 
   s.add_dependency 'rails', '~> 4.2.7'
+  s.add_dependency 'nested_form', '~> 0.3.0'
+  s.add_dependency 'jquery-rails', '~> 4.2.0'
   # Database
   s.add_development_dependency 'sqlite3'
   # Tests

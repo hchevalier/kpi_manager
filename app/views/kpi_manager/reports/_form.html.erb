@@ -1,0 +1,27 @@
+<%= nested_form_for(@report) do |f| %>
+  Name: <%= f.text_field :name %><br>
+  Sending hour: <%= f.number_field :send_hour, min: 0, max: 23 %><br>
+  Frequency: <%= f.select :send_frequency, KpiManager::Report::FREQUENCIES, id: 'frequency' %><br>
+  Report as: <%= f.select :send_step, KpiManager::Report::STEPS %><br>
+  Recipients: <%= f.text_field :recipients %><br>
+
+  <table id="kpis">
+    <tr>
+      <th>KPI</th>
+      <th>Type</th>
+      <th>Unit</th>
+      <th>Actions</th>
+    </tr>
+    <%= f.fields_for :kpis, :wrapper => false do |kpi_form| %>
+      <tr class="fields">
+        <td><%= kpi_form.select :slug, KpiManager::Kpi.list.map { |slug, kpi| [kpi[:label], slug] }  %></td>
+        <td><%= kpi_form.select :kpi_type, KpiManager::Kpi::TYPES %></td>
+        <td><%= kpi_form.text_field :unit %></td>
+        <td><%= kpi_form.link_to_remove "Remove this KPI" %></td>
+      </tr>
+    <% end %>
+  </table>
+  <p><%= f.link_to_add "Add a KPI", :kpis, :data => { :target => "#kpis" } %></p>
+
+  <%= f.submit 'Save' %> <%= link_to 'Back', reports_path %>
+<% end %>

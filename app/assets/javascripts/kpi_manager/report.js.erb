@@ -1,0 +1,19 @@
+$(document).ready(function() {
+  if ($('#report_send_step').length > 0) {
+    function refresh_steps(event, no_init) {
+      var frequency = $('#report_send_frequency').prop('selectedIndex');
+
+      $('#report_send_step option').each(function(i, e) {
+        if (i > frequency) {
+          $(e).prop('disabled', 'disabled');
+        } else {
+          $(e).prop('disabled', false);
+        }
+      });
+      if (no_init === undefined)
+        $('#report_send_step').val($('#report_send_step option')[frequency].value);
+    }
+    $('#report_send_frequency').on('change', refresh_steps);
+    refresh_steps(null, true);
+  }
+});

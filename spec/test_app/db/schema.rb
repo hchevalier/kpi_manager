@@ -11,53 +11,62 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_170_116_205_702) do
-  create_table 'cars', force: :cascade do |t|
-    t.string   'brand'
-    t.string   'model'
-    t.float    'price'
-    t.datetime 'created_at', null: false
-    t.datetime 'updated_at', null: false
+ActiveRecord::Schema.define(version: 20170117215102) do
+
+  create_table "cars", force: :cascade do |t|
+    t.string   "brand"
+    t.string   "model"
+    t.float    "price"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table 'kpi_manager_dashboards', force: :cascade do |t|
-    t.string   'name'
-    t.string   'slug'
-    t.datetime 'created_at', null: false
-    t.datetime 'updated_at', null: false
+  create_table "kpi_manager_dashboards", force: :cascade do |t|
+    t.string   "name"
+    t.string   "slug"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table 'kpi_manager_kpis', force: :cascade do |t|
-    t.string  'slug'
-    t.integer 'report_id'
+  create_table "kpi_manager_kpis", force: :cascade do |t|
+    t.string  "slug"
+    t.integer "kpi_type"
+    t.string  "unit"
+    t.integer "report_id"
   end
 
-  create_table 'kpi_manager_reports', force: :cascade do |t|
-    t.string   'name'
-    t.datetime 'created_at', null: false
-    t.datetime 'updated_at', null: false
+  create_table "kpi_manager_reports", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "send_hour"
+    t.integer  "send_frequency"
+    t.integer  "send_step"
+    t.datetime "send_at"
+    t.text     "recipients"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
 
-  create_table 'orders', force: :cascade do |t|
-    t.integer  'car_id'
-    t.integer  'user_id'
-    t.integer  'promotion_id'
-    t.float    'paid_price'
-    t.datetime 'created_at',   null: false
-    t.datetime 'updated_at',   null: false
+  create_table "orders", force: :cascade do |t|
+    t.integer  "car_id"
+    t.integer  "user_id"
+    t.integer  "promotion_id"
+    t.float    "paid_price"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
-  create_table 'promotions', force: :cascade do |t|
-    t.integer 'percentage'
+  create_table "promotions", force: :cascade do |t|
+    t.integer "percentage"
   end
 
-  create_table 'users', force: :cascade do |t|
-    t.string   'firstname'
-    t.string   'lastname'
-    t.string   'email'
-    t.date     'birthdate'
-    t.boolean  'enabled', default: true
-    t.datetime 'created_at',                null: false
-    t.datetime 'updated_at',                null: false
+  create_table "users", force: :cascade do |t|
+    t.string   "firstname"
+    t.string   "lastname"
+    t.string   "email"
+    t.date     "birthdate"
+    t.boolean  "enabled",    default: true
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
+
 end
