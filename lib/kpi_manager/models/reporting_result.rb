@@ -1,23 +1,32 @@
 module KpiManager
-  class ReportingResult
+  class ReportingResult # :nodoc:
     attr_accessor :results, :from, :to
 
     def initialize(table)
       @results = table
     end
 
+    def period(i)
+      @results[i]
+    end
+
     def -(other)
-      left = self.results
+      left = results
       right = other.results
-      res = left.zip(right).map do |left, right|
-        [
-          left[0],
-          (right[1].to_f - left[1].to_f) / left[1].to_f * 100
-        ]
+
+      res = []
+      left.each_with_index do |period, i|
+        res << period.zip(right[i]).map do |left_period, right_period|
+          [
+            left_period[0],
+            (right_period[1].to_f - left_period[1].to_f) / left_period[1].to_f * 100
+          ]
+        end
       end
+
       rr = KpiManager::ReportingResult.new(res)
-      rr.from = other.from - self.from
-      rr.to = other.to - self.to
+      rr.from = other.from - from
+      rr.to = other.to - to
       rr
     end
   end

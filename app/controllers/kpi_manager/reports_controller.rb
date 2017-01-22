@@ -15,9 +15,9 @@ module KpiManager
     def create
       @report = Report.new(permited_params)
       @report.send_at = Date.today.beginning_of_day + @report.send_hour.hours
-      @report.send_at += 24.hours if @report.send_at < Time.zone.now 
+      @report.send_at += 24.hours if @report.send_at < Time.zone.now
       if @report.save
-       redirect_to reports_path
+        redirect_to reports_path
       else
         render :new
       end
@@ -30,9 +30,9 @@ module KpiManager
     def update
       @report = Report.find(params[:id])
       @report.send_at = Date.today.beginning_of_day + @report.send_hour.hours
-      @report.send_at += 24.hours if @report.send_at < Time.zone.now 
+      @report.send_at += 24.hours if @report.send_at < Time.zone.now
       if @report.update(permited_params)
-       redirect_to reports_path
+        redirect_to reports_path
       else
         render :edit
       end
@@ -53,7 +53,14 @@ module KpiManager
     private
 
     def permited_params
-      params.require(:report).permit(:name, :send_hour, :send_frequency, :send_step, :recipients, kpis_attributes: [:id, :slug, :kpi_type, :unit, :_destroy])
+      params.require(:report).permit(
+        :name,
+        :send_hour,
+        :send_frequency,
+        :send_step,
+        :recipients,
+        kpis_attributes: [:id, :slug, :kpi_type, :unit, :_destroy]
+      )
     end
   end
 end

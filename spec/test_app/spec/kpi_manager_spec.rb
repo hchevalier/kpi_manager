@@ -15,67 +15,78 @@ RSpec.describe KpiManager::Report, :type => :model do
 
     user1.buy_car(car1)
     user2.buy_car(car2, Promotion.create(percentage: 10))
+  end
 
+  it 'generates a full report' do
     @report = KpiManager::Report.create(name: 'My first report')
     @report.kpis.create(slug: 'users_count')
     @report.kpis.create(slug: 'total_earned')
     @report.kpis.create(slug: 'average_order')
     @report.kpis.create(slug: 'promotion_used')
     @report.kpis.create(slug: 'average_promotion')
-  end
 
-  it 'generates a report for previous month' do
-    # Last month
-    expectancy = [
-      ["Subscribed users", 1],
-      ["Total earned", 700.00],
-      ["Average order", 700.00],
-      ["Promotion used", 1],
-      ["Average promotion", 30]
-    ]
-    report = @report.generate(60.days.ago, 31.days.ago)
-    expect(report.results).to eql(expectancy)
-  end
-
-  it 'generates a report for current month' do
-    # Current month
     expectancy = [
       ["Subscribed users", 2],
       ["Total earned", 2800.00],
       ["Average order", 1400.00],
       ["Promotion used", 1],
       ["Average promotion", 5]
+
     ]
-    report = @report.generate(30.days.ago)
-    expect(report.results).to eql(expectancy)
+    report = @report.generate(30.days.ago, Time.zone.now, :monthly)
+    expect(report.period(0)).to eql(expectancy)
+  end
+
+  it 'generates a report for previous month' do
+    @report = KpiManager::Report.create(name: 'My first report')
+    @report.kpis.create(slug: 'users_count')
+
+    expectancy = [
+      ["Subscribed users", 1]
+    ]
+    report = @report.generate(60.days.ago, 31.days.ago, :monthly)
+    expect(report.period(0)).to eql(expectancy)
+  end
+
+  it 'generates a report for current month' do
+    @report = KpiManager::Report.create(name: 'My first report')
+    @report.kpis.create(slug: 'users_count')
+
+    expectancy = [
+      ["Subscribed users", 2]
+    ]
+    report = @report.generate(30.days.ago, Time.zone.now, :monthly)
+    expect(report.period(0)).to eql(expectancy)
   end
 
   context 'generating a diff' do
     it 'works with compare().with()' do
-      # Diff
+      @report = KpiManager::Report.create(name: 'My first report')
+      @report.kpis.create(slug: 'users_count')
+      @report.kpis.create(slug: 'total_earned')
+      @report.kpis.create(slug: 'average_order')
+
       expectancy = [
         ["Subscribed users", 100.0],
         ["Total earned", 300.00],
-        ["Average order", 100.00],
-        ["Promotion used", 0.0],
-        ["Average promotion", -83.33333333333334]
+        ["Average order", 100.00]
       ]
-      report = @report.compare(60.days.ago, 31.days.ago).with(30.days.ago, Time.zone.now)
-      expect(report.results).to eql(expectancy)
+      report = @report.compare(60.days.ago, 31.days.ago, :monthly).with(30.days.ago, Time.zone.now, :monthly)
+      expect(report.period(0)).to eql(expectancy)
     end
 
     it 'works when subtracting two report results' do
-      # Diff
+      @report = KpiManager::Report.create(name: 'My first report')
+      @report.kpis.create(slug: 'promotion_used')
+      @report.kpis.create(slug: 'average_promotion')
+
       expectancy = [
-        ["Subscribed users", 100.0],
-        ["Total earned", 300.00],
-        ["Average order", 100.00],
         ["Promotion used", 0.0],
         ["Average promotion", -83.33333333333334]
       ]
-      report1 = @report.generate(60.days.ago, 31.days.ago)
-      report2 = @report.generate(30.days.ago, Time.zone.now)
-      expect((report1 - report2).results).to eql(expectancy)
+      report1 = @report.generate(60.days.ago, 31.days.ago, :monthly)
+      report2 = @report.generate(30.days.ago, Time.zone.now, :monthly)
+      expect((report1 - report2).period(0)).to eql(expectancy)
     end
   end
 end

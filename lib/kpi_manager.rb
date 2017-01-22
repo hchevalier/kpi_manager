@@ -3,6 +3,8 @@ require 'kpi_manager/engine'
 module KpiManager # :nodoc:
 end
 
+require 'kpi_manager/exceptions'
+
 require 'kpi_manager/models/dataset'
 require 'kpi_manager/models/kpi'
 require 'kpi_manager/models/reporting_result'

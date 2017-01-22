@@ -4,23 +4,87 @@ module KpiManager
     has_many :kpis, class_name: 'KpiManager::Kpi'
     accepts_nested_attributes_for :kpis, allow_destroy: true
 
-    after_initialize :initialize_instance_vars
-
     enum send_frequency: %w(daily weekly monthly)
     FREQUENCIES = KpiManager::Report.send_frequencies.keys.to_a.freeze
 
     enum send_step: %w(days weeks months)
     STEPS = KpiManager::Report.send_steps.keys.to_a.freeze
 
-    def generate(from, to = nil)
-      @from = from
-      @to = to || Time.zone.now
-      @report = []
+    def generate(from, to, step)
+      init_vars(from, to, step)
 
-      @datacache.clear
+      @from = from
+      while @from < @initial_to
+        @to = @from + express_in_days(step)
+        @to = @to > @initial_to ? @initial_to : @to
+        @datacache.clear
+        @period << I18n.localize(@from)
+        @report << generate_period
+        @from = @to
+      end
+
+      rr = KpiManager::ReportingResult.new(@report)
+      rr.from = @initial_from
+      rr.to = @initial_to
+      rr
+    end
+
+    def express_in_days(step)
+      case step
+      when :daily
+        1.day
+      when :weekly
+        1.week
+      when :monthly
+        1.month
+      end
+    end
+
+    def compare(from, to, step)
+      init_vars(from, to, step)
+      self
+    end
+
+    def with(oth_from, oth_to, oth_step)
+      raise NoDateRange, 'No date range set' unless @initial_from && @initial_to
+
+      left = generate(@initial_from, @initial_to, @step).results
+      # FIXME: params break @initial_from and @initial_to below
+      right = generate(oth_from, oth_to, oth_step).results
+
+      res = []
+      left.each_with_index do |period, i|
+        res << period.zip(right[i]).map do |left_period, right_period|
+          [
+            left_period[0],
+            (right_period[1].to_f - left_period[1].to_f) / left_period[1].to_f * 100
+          ]
+        end
+      end
+
+      rr = KpiManager::ReportingResult.new(res)
+      rr.from = oth_from - @initial_from
+      rr.to = oth_to - @initial_to
+      rr
+    end
+
+    private
+
+    def init_vars(from, to, step)
+      @initial_from = from
+      @initial_to = to
+      @step = step
+
+      @datacache = {}
+      @report = []
+      @period = []
+    end
+
+    def generate_period
+      step_report = []
 
       registered_kpis.each do |kpi_name, kpi_data|
-        @report << [
+        step_report << [
           kpi_data[:label],
           send(
             kpi_name,
@@ -30,42 +94,7 @@ module KpiManager
         ]
       end
 
-      rr = KpiManager::ReportingResult.new(@report)
-      rr.from = @from
-      rr.to = @to
-      rr
-    end
-
-    def compare(from, to)
-      @from = from
-      @to = to
-      self
-    end
-
-    def with(oth_from, oth_to)
-      raise RuntimeError, 'No date range set' unless @from && @to
-
-      left = self.generate(@from, @to).results
-      right = self.generate(oth_from, oth_to).results
-
-      res = left.zip(right).map do |left, right|
-        [
-          left[0],
-          (right[1].to_f - left[1].to_f) / left[1].to_f * 100
-        ]
-      end
-
-      rr = KpiManager::ReportingResult.new(res)
-      rr.from = oth_from - @from
-      rr.to = oth_to - @to
-      rr
-    end
-
-    private
-
-    def initialize_instance_vars(_attributes = {}, options = {})
-      @options = options
-      @datacache = {}
+      step_report
     end
 
     def references(kpi_options)
